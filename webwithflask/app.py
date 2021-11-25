@@ -3,17 +3,17 @@ from werkzeug.exceptions import abort
 
 import mysql.connector
 def get_db_connection():
-   mydb = mysql.connector.connect(
+    mydb = mysql.connector.connect(
         host="localhost",
         user="root",
         password="",
-        database="Apwebflask"
+        database="BLOGFLASK"
     )
 
     return mydb
 
 def get_post(post_id):
-     mydb = get_db_connection()
+    mydb = get_db_connection()
 
     cursor = mydb.cursor()
 
@@ -116,11 +116,12 @@ def edit(id):
 
 @app.route('/<int:id>/delete', methods=('POST',))
 def delete(id):
+    post = get_post(id)
     mydb = get_db_connection()
 
     cursor = mydb.cursor()
-    conn.execute('DELETE FROM posts WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
+    cursor.execute('DELETE FROM posts WHERE id = %s', (id,))
+    mydb.commit()
+    mydb.close()
     flash('"{}" was successfully deleted!'.format(post['title']))
     return redirect(url_for('index'))
